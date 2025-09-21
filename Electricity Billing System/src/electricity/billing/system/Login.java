@@ -4,9 +4,12 @@ package electricity.billing.system;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.*;
 
 public class Login extends JFrame implements ActionListener {
     JButton login,cancel,signup;  // declare buttons globally so we can easiy use for actionlistener class
+    JTextField username,password;
+    Choice loginin;
     Login(){
         super("Login"); // super is the first statement otherwise it give error
         // Jlabel is used to write anything in the frame.
@@ -17,7 +20,7 @@ public class Login extends JFrame implements ActionListener {
         lblusername.setBounds(300,20,100,20);
         add(lblusername);
         
-        JTextField username = new JTextField();
+        username = new JTextField();
         username.setBounds(400,20,150,20);
         add(username);
         
@@ -26,7 +29,7 @@ public class Login extends JFrame implements ActionListener {
         lblpassword.setBounds(300,60,100,20);
         add(lblpassword);
         
-        JTextField password = new JTextField();
+        password = new JTextField();
         password.setBounds(400,60,150,20);
         add(password);
         
@@ -36,7 +39,7 @@ public class Login extends JFrame implements ActionListener {
         lbllogininas.setBounds(300,100,100,20);
         add(lbllogininas);
         //Dropdown - means choice to select option
-        Choice loginin = new Choice();
+        loginin = new Choice();
         loginin.add("Admin");
         loginin.add("Customer");
         loginin.setBounds(400,100,150,20);
@@ -78,8 +81,31 @@ public class Login extends JFrame implements ActionListener {
      //Override
     public void actionPerformed(ActionEvent ae) {
         if(ae.getSource() == login){
+            String susername = username.getText();
+            String spassword = password.getText();
+            String user = loginin.getSelectedItem();
             
-        }else if(ae.getSource() == cancel){
+            try{
+                connection c = new connection();
+                String query = "select * from login where username = '"+susername+"'and password = '"+spassword+"'and user='"+user+"'";
+                ResultSet rs = c.s.executeQuery(query);
+                
+                if(rs.next()){
+                    setVisible(true);
+                    new Project();
+                }
+                else{
+                    JOptionPane.showMessageDialog(null,"Invalid Login");
+                    username.setText("");
+                    password.setText("");
+                }
+                
+            } catch(Exception e){
+                e.printStackTrace();
+            } 
+            
+        }
+            else if(ae.getSource() == cancel){
             setVisible(false);
             
         }else if(ae.getSource() == signup){
